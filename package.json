@@ -1,6 +1,6 @@
 {
   "name": "moovie-front",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -16,6 +16,12 @@
     "format": "prettier --write src/",
     "release": "standard-version",
     "prepare": "husky"
+  },
+  "standard-version": {
+    "scripts": {
+      "postchangelog": "git add CHANGELOG.md",
+      "posttag": "echo 'Tag created and CHANGELOG.md added to the commit'"
+    }
   },
   "dependencies": {
     "pinia": "^2.1.7",
