@@ -1,6 +1,9 @@
 # Etapa 1: Construcción
 FROM node:20-alpine AS builder
+
+# Usa root para evitar problemas de permisos
 USER root
+
 # Crea el directorio de trabajo
 WORKDIR /app
 
@@ -12,10 +15,10 @@ RUN npm install
 
 # Copia todo el código fuente al contenedor
 COPY . .
-USER 1001
-# Construye la aplicación
+
+# Construye la aplicación (con permisos root)
 RUN npm run build
-USER root
+
 # Etapa 2: Servir desde Nginx
 FROM nginx:alpine
 
@@ -27,4 +30,6 @@ EXPOSE 80
 
 # Comando de inicio
 CMD ["nginx", "-g", "daemon off;"]
+
+# Cambia al usuario 1001 para la seguridad en la etapa final
 USER 1001
