@@ -1,32 +1,29 @@
-# Imagen base de Node.js
+# Etapa 1: Construcción
 FROM node:20-alpine AS builder
 
-# Directorio de trabajo
+# Crea el directorio de trabajo
 WORKDIR /app
 
-# Copia el package.json y package-lock.json
+# Copia package.json y package-lock.json
 COPY package*.json ./
 
 # Instala las dependencias
 RUN npm install
 
-# Copia el código fuente
+# Copia todo el código fuente al contenedor
 COPY . .
 
 # Construye la aplicación
 RUN npm run build
 
-# Crea una imagen ligera para servir los archivos estáticos
-FROM node:20-alpine
+# Etapa 2: Servir desde Nginx
+FROM nginx:alpine
 
-# Copia los archivos construidos
-COPY --from=builder /app/dist /app
+# Copia los archivos estáticos de la etapa de construcción a la raíz de Nginx
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Instala vite globalmente para `vite preview`
-RUN npm install -g vite
-
-# Expone el puerto
-EXPOSE 4173
+# Expone el puerto 80
+EXPOSE 80
 
 # Comando de inicio
-CMD ["vite", "preview", "--port", "4173"]
+CMD ["nginx", "-g", "daemon off;"]
